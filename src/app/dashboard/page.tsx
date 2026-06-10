@@ -1,7 +1,10 @@
+export const dynamic = 'force-dynamic'
+
 import { prisma } from '@/lib/prisma'
 import { Globe, TrendingUp, Phone, Users, Zap, ArrowRight, CheckCircle2, MessageSquare, Star, Bot } from 'lucide-react'
 import Link from 'next/link'
 import { getScoreColor } from '@/lib/scoring'
+export const revalidate = 0
 
 const STATUS_EMOJI: Record<string, string> = {
   'New Lead': '🔥', 'Researched': '🔎', 'Contacted': '📞', 'Follow Up Needed': '⏰',
