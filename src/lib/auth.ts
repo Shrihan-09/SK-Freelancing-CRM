@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client'
-import { PrismaAdapter } from '@auth/prisma-adapter'
 import { compare, hash } from 'bcryptjs'
 import { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
@@ -16,7 +15,6 @@ export async function hashPassword(password: string) {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'jwt',
   },
