@@ -17,7 +17,6 @@ export async function GET(req: NextRequest) {
       include: {
         business: { select: { id: true, companyName: true, industry: true } },
         assignee: { select: { id: true, name: true, avatar: true } },
-        _count: { select: { comments: true } },
       },
     })
     return NextResponse.json({ tasks })

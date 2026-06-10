@@ -24,11 +24,11 @@ export async function POST(req: NextRequest) {
   // Find or create a default user
   let user = await prisma.user.findFirst()
   if (!user) {
-    user = await prisma.user.create({ data: { email: 'user@sk-freelancing.com', name: senderName } })
+    user = await prisma.user.create({ data: { email: 'user@sk-freelancing.com', name: senderName, password: 'placeholder' } })
   }
 
   const message = await prisma.message.create({
-    data: { content: content.trim(), channel, senderId: user.id },
+    data: { content: content.trim(), channel, userId: user.id },
     include: { sender: { select: { id: true, name: true, avatar: true } } },
   })
   return NextResponse.json(message, { status: 201 })
