@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
       // Deduplication check
       const existing = await prisma.business.findFirst({
-        where: { companyName: { equals: companyName, mode: 'insensitive' } }
+        where: { companyName: { equals: companyName } }
       })
       if (existing) { results.skipped++; continue }
 
