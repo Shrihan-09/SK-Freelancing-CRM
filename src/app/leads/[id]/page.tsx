@@ -43,14 +43,6 @@ export default function LeadDetailPage() {
   useEffect(() => { fetchLead() }, [fetchLead])
 
   const runAnalysis = async () => {
-    setAnalyzing(true)
-    const res = await fetch('/api/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ businessId: id }),
-    })
-    const data = await res.json()
-    if (data.analysis) setAnalysis(data.analysis)
     setAnalyzing(false)
   }
 

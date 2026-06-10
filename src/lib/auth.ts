@@ -26,6 +26,8 @@ export async function hashPassword(password: string) {
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET || 'sk-freelancing-secret-2024',
+  pages: { signIn: '/login', error: '/login' },
   session: {
     strategy: 'jwt',
   },

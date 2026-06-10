@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import Providers from './providers'
 
 export const metadata: Metadata = {
   title: 'SK Freelancing — AI Cold Outreach CRM',
@@ -22,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body style={{ fontFamily: "'Inter', system-ui, sans-serif", background: '#030303', color: 'white', margin: 0 }}>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

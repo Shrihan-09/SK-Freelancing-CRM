@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 import AppShell from '@/components/AppShell'
 import { useState, useEffect } from 'react'
 import {

@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard, Users, Sparkles, Phone, Settings,
-  TrendingUp, Upload, Zap, CheckSquare, MessageSquare, Bot
+  LayoutDashboard, Users, Phone, Settings,
+  TrendingUp, Upload, Zap, CheckSquare, MessageSquare
 } from 'lucide-react'
 
 const navItems = [
@@ -12,9 +12,7 @@ const navItems = [
   { href: '/leads',       icon: Users,           label: 'Leads',     mobile: true },
   { href: '/tasks',       icon: CheckSquare,     label: 'Tasks',     mobile: true },
   { href: '/chat',        icon: MessageSquare,   label: 'Chat',      mobile: true },
-  { href: '/ai',          icon: Bot,             label: 'AI',        mobile: true },
   { href: '/analytics',   icon: TrendingUp,      label: 'Analytics', mobile: false },
-  { href: '/analysis',    icon: Sparkles,        label: 'Analysis',  mobile: false },
   { href: '/calls',       icon: Phone,           label: 'Calls',     mobile: false },
   { href: '/bulk-import', icon: Upload,          label: 'Import',    mobile: false },
   { href: '/settings',    icon: Settings,        label: 'Settings',  mobile: true },
