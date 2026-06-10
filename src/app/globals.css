@@ -171,6 +171,24 @@ html { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
   .mobile-nav { display: none !important; }
 }
 
+/* LED glow strip */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #e11d48 20%, #fb7185 50%, #e11d48 80%, transparent 100%);
+  box-shadow: 0 0 8px 1px rgba(225,29,72,0.8), 0 0 20px 2px rgba(225,29,72,0.4), 0 0 40px 4px rgba(225,29,72,0.2);
+  z-index: 9999;
+  animation: ledPulse 3s ease-in-out infinite;
+}
+@keyframes ledPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; box-shadow: 0 0 12px 2px rgba(225,29,72,1), 0 0 30px 4px rgba(225,29,72,0.6); }
+}
+
 /* Recharts dark theme overrides */
 .recharts-cartesian-axis-tick-value { fill: rgba(255,255,255,0.4) !important; }
 .recharts-cartesian-grid-horizontal line,

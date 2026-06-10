@@ -2,17 +2,17 @@
 
 A full-stack Next.js collaborative platform for managing web design cold outreach to local NJ businesses.
 
-**Tech stack:** Next.js 14 · TypeScript · Tailwind CSS · Prisma · SQLite/PostgreSQL · Anthropic Claude
+**Tech stack:** Next.js 14 · TypeScript · Tailwind CSS · Prisma · SQLite/PostgreSQL · Google Gemini
 
 ---
 
 ## Features
 
-- **AI Business Analysis** — Claude-powered reports: problems, website features, automations, cold call scripts
+- **AI Business Analysis** — Gemini-powered reports: problems, website features, automations, cold call scripts
 - **Lead CRM** — 44 pre-loaded local businesses, scoring 1–99, custom StatusDropdown with animations
 - **Kanban Tasks** — Backlog → In Progress → Review → Completed with drag-and-drop style moves
 - **Team Chat** — Channels (general, leads, projects, ai-ideas) persisted to database
-- **AI Assistant** — Full chat interface with Claude, quick prompts for sales scripts/emails/proposals
+- **AI Assistant** — Full chat interface with Gemini, quick prompts for sales scripts/emails/proposals
 - **Analytics Dashboard** — 6 chart types: pipeline, industry, score distribution, location performance
 - **Bulk Import** — CSV/Excel/paste with auto column detection, deduplication, auto-scoring
 - **Mobile-first** — Bottom navigation, responsive layout, optimized for cold calling on-the-go
@@ -54,16 +54,16 @@ Copy `.env.example` → `.env` and fill in:
 # SQLite for local dev (default)
 DATABASE_URL="file:./dev.db"
 
-# Get from console.anthropic.com
-ANTHROPIC_API_KEY="sk-ant-..."
+# Get free key from aistudio.google.com
+GEMINI_API_KEY="your-key-here"
 
 # App
 NEXT_PUBLIC_APP_NAME="SK Freelancing"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
-Without `ANTHROPIC_API_KEY`: the app fully works, AI analysis shows demo data.
-With it: real Claude Sonnet analysis per business.
+Without `GEMINI_API_KEY`: the app fully works, AI features show a setup prompt.
+With it: real Gemini 1.5 Flash analysis per business.
 
 ---
 
@@ -99,7 +99,9 @@ With it: real Claude Sonnet analysis per business.
    ```
 3. Add env vars in Vercel dashboard:
    - `DATABASE_URL` = your Neon connection string
-   - `ANTHROPIC_API_KEY` = your key
+   - `NEXTAUTH_SECRET` = run `openssl rand -base64 32`
+   - `NEXTAUTH_URL` = your Vercel deployment URL
+   - `GEMINI_API_KEY` = free key from [aistudio.google.com](https://aistudio.google.com)
 4. Deploy:
    ```bash
    npx vercel --prod
@@ -134,7 +136,7 @@ src/
 ├── app/
 │   ├── api/
 │   │   ├── analytics/     # Analytics data API
-│   │   ├── analyze/       # AI business analysis (Claude)
+│   │   ├── analyze/       # AI business analysis (Gemini)
 │   │   ├── businesses/    # CRUD for leads
 │   │   ├── bulk-import/   # CSV import with dedup + scoring
 │   │   ├── locations/     # Dynamic location management
@@ -213,8 +215,7 @@ import StatusDropdown from '@/components/ui/StatusDropdown'
 />
 ```
 
-Statuses with colors + emoji: New Lead 🔥, Researched 🔎, Contacted 📞,
-Follow Up Needed ⏰, Interested ⭐, Demo Sent 🚀, Closed ✅, Not Interested ❌
+Statuses with colors: New Lead, Researched, Contacted, Follow Up Needed, Interested, Demo Sent, Closed, Not Interested
 
 ---
 

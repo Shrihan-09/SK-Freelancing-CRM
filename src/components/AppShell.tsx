@@ -1,10 +1,11 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
 import {
   LayoutDashboard, Users, Phone, Settings,
-  TrendingUp, Upload, Zap, CheckSquare, MessageSquare
+  TrendingUp, Upload, Zap, CheckSquare, MessageSquare, Bot, LogOut, Loader2
 } from 'lucide-react'
 
 const navItems = [
@@ -12,6 +13,7 @@ const navItems = [
   { href: '/leads',       icon: Users,           label: 'Leads',     mobile: true },
   { href: '/tasks',       icon: CheckSquare,     label: 'Tasks',     mobile: true },
   { href: '/chat',        icon: MessageSquare,   label: 'Chat',      mobile: true },
+  { href: '/ai',          icon: Bot,             label: 'AI',        mobile: true },
   { href: '/analytics',   icon: TrendingUp,      label: 'Analytics', mobile: false },
   { href: '/calls',       icon: Phone,           label: 'Calls',     mobile: false },
   { href: '/bulk-import', icon: Upload,          label: 'Import',    mobile: false },
@@ -20,14 +22,38 @@ const navItems = [
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
+  const { data: session, status } = useSession()
   const [leadCount, setLeadCount] = useState<number | null>(null)
 
   useEffect(() => {
-    fetch('/api/businesses?count=true')
-      .then(r => r.json())
-      .then(d => setLeadCount(d.count))
-      .catch(() => {})
-  }, [])
+    if (status === 'unauthenticated') {
+      router.replace('/login')
+    }
+  }, [status, router])
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetch('/api/businesses?count=true')
+        .then(r => r.json())
+        .then(d => setLeadCount(d.count))
+        .catch(() => {})
+    }
+  }, [status])
+
+  if (status === 'loading' || status === 'unauthenticated') {
+    return (
+      <div className="flex items-center justify-center h-screen" style={{ background: '#030303' }}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center animate-glow-pulse"
+            style={{ background: 'linear-gradient(135deg, #e11d48 0%, #9f1239 100%)' }}>
+            <Zap className="w-5 h-5 text-white" />
+          </div>
+          <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'rgba(255,255,255,0.4)' }} />
+        </div>
+      </div>
+    )
+  }
 
   const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href))
 
@@ -82,22 +108,37 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        {/* Team status footer */}
+        {/* User footer */}
         <div className="p-4 border-t flex-shrink-0" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-          <div className="glass-card p-3 space-y-2">
-            <div className="text-[10px] font-medium tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>TEAM ONLINE</div>
-            {['SK', 'Friend'].map(name => (
-              <div key={name} className="flex items-center gap-2">
-                <div className="relative">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
-                    style={{ background: name === 'SK' ? '#e11d48' : '#3b82f6' }}>
-                    {name[0]}
-                  </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 border border-black" />
-                </div>
-                <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>{name}</span>
+          <div className="glass-card p-3 space-y-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
+                style={{ background: '#e11d48' }}>
+                {session?.user?.name?.[0]?.toUpperCase() || 'U'}
               </div>
-            ))}
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-medium text-white truncate">{session?.user?.name || 'User'}</div>
+                <div className="text-[10px] truncate" style={{ color: 'rgba(255,255,255,0.35)' }}>{session?.user?.email || ''}</div>
+              </div>
+            </div>
+            <button
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs transition-all"
+              style={{ color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent' }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(225,29,72,0.08)'
+                ;(e.currentTarget as HTMLButtonElement).style.color = '#fb7185'
+                ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(225,29,72,0.25)'
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                ;(e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.45)'
+                ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.08)'
+              }}
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              Sign out
+            </button>
           </div>
         </div>
       </aside>

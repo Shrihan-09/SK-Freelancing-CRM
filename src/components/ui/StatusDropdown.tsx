@@ -1,15 +1,15 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 
-export const STATUS_CONFIG: Record<string, { emoji: string; color: string; bg: string; border: string; glow: string }> = {
-  'New Lead':          { emoji: '🔥', color: '#f97316', bg: 'rgba(249,115,22,0.1)',  border: 'rgba(249,115,22,0.3)',  glow: 'rgba(249,115,22,0.2)' },
-  'Researched':        { emoji: '🔎', color: '#60a5fa', bg: 'rgba(96,165,250,0.1)',  border: 'rgba(96,165,250,0.3)',  glow: 'rgba(96,165,250,0.2)' },
-  'Contacted':         { emoji: '📞', color: '#34d399', bg: 'rgba(52,211,153,0.1)',  border: 'rgba(52,211,153,0.3)',  glow: 'rgba(52,211,153,0.2)' },
-  'Follow Up Needed':  { emoji: '⏰', color: '#fbbf24', bg: 'rgba(251,191,36,0.1)',  border: 'rgba(251,191,36,0.3)',  glow: 'rgba(251,191,36,0.2)' },
-  'Interested':        { emoji: '⭐', color: '#a78bfa', bg: 'rgba(167,139,250,0.1)', border: 'rgba(167,139,250,0.3)', glow: 'rgba(167,139,250,0.2)' },
-  'Demo Sent':         { emoji: '🚀', color: '#fb923c', bg: 'rgba(251,146,60,0.1)',  border: 'rgba(251,146,60,0.3)',  glow: 'rgba(251,146,60,0.2)' },
-  'Closed':            { emoji: '✅', color: '#4ade80', bg: 'rgba(74,222,128,0.15)', border: 'rgba(74,222,128,0.4)',  glow: 'rgba(74,222,128,0.25)' },
-  'Not Interested':    { emoji: '❌', color: '#f87171', bg: 'rgba(248,113,113,0.1)', border: 'rgba(248,113,113,0.3)', glow: 'rgba(248,113,113,0.2)' },
+export const STATUS_CONFIG: Record<string, { color: string; bg: string; border: string; glow: string }> = {
+  'New Lead':          { color: '#f97316', bg: 'rgba(249,115,22,0.1)',  border: 'rgba(249,115,22,0.3)',  glow: 'rgba(249,115,22,0.2)' },
+  'Researched':        { color: '#60a5fa', bg: 'rgba(96,165,250,0.1)',  border: 'rgba(96,165,250,0.3)',  glow: 'rgba(96,165,250,0.2)' },
+  'Contacted':         { color: '#34d399', bg: 'rgba(52,211,153,0.1)',  border: 'rgba(52,211,153,0.3)',  glow: 'rgba(52,211,153,0.2)' },
+  'Follow Up Needed':  { color: '#fbbf24', bg: 'rgba(251,191,36,0.1)',  border: 'rgba(251,191,36,0.3)',  glow: 'rgba(251,191,36,0.2)' },
+  'Interested':        { color: '#a78bfa', bg: 'rgba(167,139,250,0.1)', border: 'rgba(167,139,250,0.3)', glow: 'rgba(167,139,250,0.2)' },
+  'Demo Sent':         { color: '#fb923c', bg: 'rgba(251,146,60,0.1)',  border: 'rgba(251,146,60,0.3)',  glow: 'rgba(251,146,60,0.2)' },
+  'Closed':            { color: '#4ade80', bg: 'rgba(74,222,128,0.15)', border: 'rgba(74,222,128,0.4)',  glow: 'rgba(74,222,128,0.25)' },
+  'Not Interested':    { color: '#f87171', bg: 'rgba(248,113,113,0.1)', border: 'rgba(248,113,113,0.3)', glow: 'rgba(248,113,113,0.2)' },
 }
 
 export const ALL_STATUSES = Object.keys(STATUS_CONFIG)
@@ -40,6 +40,7 @@ export default function StatusDropdown({ value, onChange, disabled, size = 'md' 
   }
 
   const isSmall = size === 'sm'
+  const dotSize = isSmall ? 7 : 9
 
   return (
     <div ref={ref} className="relative inline-block" style={{ minWidth: isSmall ? 130 : 160 }}>
@@ -54,9 +55,7 @@ export default function StatusDropdown({ value, onChange, disabled, size = 'md' 
           padding: isSmall ? '4px 10px' : '6px 12px',
           borderRadius: 8,
           border: `1px solid ${open ? '#e11d48' : cfg.border}`,
-          background: open
-            ? 'rgba(225,29,72,0.08)'
-            : cfg.bg,
+          background: open ? 'rgba(225,29,72,0.08)' : cfg.bg,
           cursor: disabled ? 'not-allowed' : 'pointer',
           transition: 'all 0.18s ease',
           boxShadow: open ? `0 0 12px rgba(225,29,72,0.25)` : `0 0 8px ${cfg.glow}`,
@@ -67,7 +66,7 @@ export default function StatusDropdown({ value, onChange, disabled, size = 'md' 
         }}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: isSmall ? 12 : 14 }}>{cfg.emoji}</span>
+          <div style={{ width: dotSize, height: dotSize, borderRadius: '50%', background: open ? '#e11d48' : cfg.color, flexShrink: 0 }} />
           <span style={{
             fontSize: isSmall ? 11 : 12,
             fontWeight: 500,
@@ -141,7 +140,7 @@ export default function StatusDropdown({ value, onChange, disabled, size = 'md' 
                     }
                   }}
                 >
-                  <span style={{ fontSize: 16, lineHeight: 1 }}>{c.emoji}</span>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: c.color, flexShrink: 0 }} />
                   <span style={{
                     fontSize: 13,
                     fontWeight: isSelected ? 600 : 400,

@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { Search, Sparkles, Phone, Star } from 'lucide-react'
+import { Search, Sparkles, Phone, Star, Info } from 'lucide-react'
 import { ALL_STATUSES, type LeadStatus } from '@/types'
 import StatusDropdown, { STATUS_CONFIG } from '@/components/ui/StatusDropdown'
 import { getScoreColor } from '@/lib/scoring'
@@ -116,7 +116,20 @@ export default function LeadsPage() {
               <tr className="border-b" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
                 {['#', 'Company', 'Industry', 'Phone', 'Reviews', 'Website', 'Score', 'Status', ''].map(h => (
                   <th key={h} className="text-left px-4 py-3 text-[11px] font-medium tracking-wider"
-                    style={{ color: 'rgba(255,255,255,0.3)' }}>{h}</th>
+                    style={{ color: 'rgba(255,255,255,0.3)' }}>
+                    {h === 'Score' ? (
+                      <div className="flex items-center gap-1">
+                        Score
+                        <div className="relative group">
+                          <Info className="w-3 h-3 cursor-help" style={{ color: 'rgba(255,255,255,0.25)' }} />
+                          <div className="absolute left-0 top-4 z-50 hidden group-hover:block w-64 p-2.5 rounded-lg pointer-events-none"
+                            style={{ background: 'rgba(10,10,10,0.97)', border: '1px solid rgba(225,29,72,0.3)', color: 'rgba(255,255,255,0.7)', lineHeight: 1.5, fontSize: 11, fontWeight: 400 }}>
+                            Score 1-99 based on: no website (+35), reviews (+25 max), family owned (+10), phone known (+10), high rating (+8)
+                          </div>
+                        </div>
+                      </div>
+                    ) : h}
+                  </th>
                 ))}
               </tr>
             </thead>

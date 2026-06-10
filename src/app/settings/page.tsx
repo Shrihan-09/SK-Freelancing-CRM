@@ -33,13 +33,13 @@ export default function SettingsPage() {
 
   const settingsSections = [
     {
-      id: 'api', title: 'AI Configuration', icon: Key, desc: 'Anthropic API key for AI analysis features',
+      id: 'api', title: 'AI Configuration', icon: Key, desc: 'Gemini API key for AI analysis features',
       content: (
         <div className="space-y-4">
           <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
             <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${apiKeyStatus === 'set' ? 'bg-emerald-400' : apiKeyStatus === 'missing' ? 'bg-red-400' : 'bg-amber-400'}`} />
             <div className="flex-1">
-              <div className="text-sm font-medium text-white">ANTHROPIC_API_KEY</div>
+              <div className="text-sm font-medium text-white">GEMINI_API_KEY</div>
               <div className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
                 {apiKeyStatus === 'set' ? 'Configured · AI analysis enabled' : 'Add to your .env file to enable AI features'}
               </div>
@@ -47,8 +47,8 @@ export default function SettingsPage() {
           </div>
           <div className="text-xs p-3 rounded-lg" style={{ background: 'rgba(225,29,72,0.08)', border: '1px solid rgba(225,29,72,0.2)', color: 'rgba(255,255,255,0.6)' }}>
             <div className="font-medium text-crimson-400 mb-1">Setup instructions</div>
-            Add <code className="bg-black/30 px-1 rounded text-crimson-400">ANTHROPIC_API_KEY=sk-ant-...</code> to your <code className="bg-black/30 px-1 rounded text-crimson-400">.env</code> file.
-            Get your key at <a href="https://console.anthropic.com" target="_blank" className="text-crimson-400 underline">console.anthropic.com</a>
+            Add <code className="bg-black/30 px-1 rounded text-crimson-400">GEMINI_API_KEY=your-key</code> to your <code className="bg-black/30 px-1 rounded text-crimson-400">.env</code> file.
+            Get your free key at <a href="https://aistudio.google.com" target="_blank" className="text-crimson-400 underline">aistudio.google.com</a>
           </div>
         </div>
       )
@@ -84,9 +84,10 @@ export default function SettingsPage() {
       content: (
         <div className="space-y-3">
           <div className="flex flex-wrap gap-2">
-            {['🖌️ Painters', '🧹 Carpet Cleaners', '🚗 Auto Body Shops', '🦷 Dentists', '🔧 Plumbers', '❄️ HVAC', '🌿 Landscapers', '🍽️ Restaurants'].map(ind => (
-              <span key={ind} className="px-3 py-1.5 rounded-lg text-xs"
+            {['Painters', 'Carpet Cleaners', 'Auto Body Shops', 'Dentists', 'Plumbers', 'HVAC', 'Landscapers', 'Restaurants'].map(ind => (
+              <span key={ind} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs"
                 style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', color: '#60a5fa' }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#60a5fa', flexShrink: 0 }} />
                 {ind}
               </span>
             ))}

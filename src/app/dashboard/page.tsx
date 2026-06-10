@@ -6,10 +6,6 @@ import Link from 'next/link'
 import { getScoreColor } from '@/lib/scoring'
 export const revalidate = 0
 
-const STATUS_EMOJI: Record<string, string> = {
-  'New Lead': '🔥', 'Researched': '🔎', 'Contacted': '📞', 'Follow Up Needed': '⏰',
-  'Interested': '⭐', 'Demo Sent': '🚀', 'Closed': '✅', 'Not Interested': '❌',
-}
 
 async function getDashboardData() {
   try {
@@ -144,7 +140,9 @@ export default async function DashboardPage() {
               const pct = Math.round((count / maxPipe) * 100)
               return (
                 <div key={status} className="flex items-center gap-3">
-                  <span className="text-xs w-6 text-center flex-shrink-0">{STATUS_EMOJI[status] || '•'}</span>
+                  <div className="w-6 flex items-center justify-center flex-shrink-0">
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: PIPELINE_COLORS[status] || '#e11d48', opacity: 0.85 }} />
+                  </div>
                   <span className="text-xs w-36 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.5)' }}>{status}</span>
                   <div className="flex-1 h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
                     <div className="h-full rounded-full transition-all duration-700"
