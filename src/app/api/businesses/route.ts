@@ -17,9 +17,9 @@ export async function GET(req: NextRequest) {
   const where: any = {}
   if (search) {
     where.OR = [
-      { companyName: { contains: search, mode: 'insensitive' } },
-      { industry: { contains: search, mode: 'insensitive' } },
-      { location: { contains: search, mode: 'insensitive' } },
+      { companyName: { contains: search } },
+      { industry: { contains: search } },
+      { location: { contains: search } },
     ]
   }
   if (industry) where.industry = industry
