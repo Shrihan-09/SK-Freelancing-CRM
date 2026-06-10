@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   const business = await prisma.business.findUnique({
     where: { id: params.id },
-    include: { analysis: true, callLogs: { orderBy: { calledAt: 'desc' }, take: 10 } },
+    include: { callLogs: { orderBy: { calledAt: 'desc' }, take: 10 } },
   })
   if (!business) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   return NextResponse.json(business)
