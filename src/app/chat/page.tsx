@@ -33,11 +33,21 @@ export default function ChatPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setLoading(true)
-    fetch(`/api/messages?channel=${channel}`)
-      .then(r => r.json())
-      .then(d => { setMessages(d.messages || []); setLoading(false) })
-      .catch(() => setLoading(false))
+    let lastTimestamp = ''
+    
+    const fetchMessages = async () => {
+      const res = await fetch(`/api/messages?channel=${channel}`)
+      const d = await res.json()
+      setMessages(d.messages || [])
+      setLoading(false)
+      if (d.messages?.length > 0) {
+        lastTimestamp = d.messages[d.messages.length - 1].createdAt
+      }
+    }
+
+    fetchMessages()
+    const interval = setInterval(fetchMessages, 4000)
+    return () => clearInterval(interval)
   }, [channel])
 
   useEffect(() => {
