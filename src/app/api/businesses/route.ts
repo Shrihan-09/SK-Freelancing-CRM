@@ -8,10 +8,20 @@ export async function GET(req: NextRequest) {
   const status = searchParams.get('status') || ''
   const sort = searchParams.get('sort') || 'score'
   const countOnly = searchParams.get('count') === 'true'
+  const locationsOnly = searchParams.get('locationsOnly') === 'true'
 
   if (countOnly) {
     const count = await prisma.business.count()
     return NextResponse.json({ count })
+  }
+
+  if (locationsOnly) {
+    const businesses = await prisma.business.findMany({
+      select: { location: true, city: true },
+      distinct: ['location'],
+      orderBy: { location: 'asc' },
+    })
+    return NextResponse.json({ locations: businesses.map(b => b.location).filter(Boolean) })
   }
 
   const where: any = {}
@@ -24,8 +34,8 @@ export async function GET(req: NextRequest) {
   }
   if (industry) where.industry = industry
   if (status) where.status = status
-  const locationId = searchParams.get('locationId') || ''
-  if (locationId) where.locationId = locationId
+  const location = searchParams.get('location') || ''
+  if (location) where.location = { contains: location, mode: 'insensitive' }
 
   const orderBy: any = sort === 'score' ? { leadScore: 'desc' }
     : sort === 'reviews' ? { reviewCount: 'desc' }
