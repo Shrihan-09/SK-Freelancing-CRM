@@ -1,35 +1,20 @@
 'use client'
 import AppShell from '@/components/AppShell'
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Plus, MapPin, Briefcase, Check, Users, Key, Globe, Bell, Palette } from 'lucide-react'
 
 export default function SettingsPage() {
-  const [newCity, setNewCity] = useState('')
   const [newIndustry, setNewIndustry] = useState('')
-  const [locations, setLocations] = useState<any[]>([])
   const [saved, setSaved] = useState(false)
   const [apiKeyStatus, setApiKeyStatus] = useState<'unknown' | 'set' | 'missing'>('unknown')
 
   useEffect(() => {
-    fetch('/api/locations').then(r => r.json()).then(d => setLocations(d.locations || []))
-    // Test if API key works via a quick check
     fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ check: true }) })
       .then(() => setApiKeyStatus('set')).catch(() => setApiKeyStatus('missing'))
   }, [])
 
   const showSaved = () => { setSaved(true); setTimeout(() => setSaved(false), 2000) }
-
-  const addLocation = async () => {
-    if (!newCity.trim()) return
-    const res = await fetch('/api/locations', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ city: newCity.trim(), state: 'NJ' }),
-    })
-    const loc = await res.json()
-    setLocations(prev => [...prev, loc])
-    setNewCity('')
-    showSaved()
-  }
 
   const settingsSections = [
     {
@@ -57,25 +42,12 @@ export default function SettingsPage() {
       id: 'locations', title: 'Target Locations', icon: MapPin, desc: 'Cities you are targeting for web design outreach',
       content: (
         <div className="space-y-3">
-          <div className="flex flex-wrap gap-2">
-            {locations.map(loc => (
-              <span key={loc.id} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs"
-                style={{ background: 'rgba(225,29,72,0.08)', border: '1px solid rgba(225,29,72,0.2)', color: '#fb7185' }}>
-                <MapPin className="w-3 h-3" /> {loc.city}, {loc.state}
-              </span>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <input value={newCity} onChange={e => setNewCity(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && addLocation()}
-              className="input-dark flex-1 text-sm" placeholder="e.g. Somerville, Warren, Watchung" />
-            <button onClick={addLocation} className="btn-crimson text-sm px-4 flex items-center gap-1.5">
-              <Plus className="w-3.5 h-3.5" /> Add
-            </button>
-          </div>
-          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            Adding a location automatically creates analytics filtering for that area.
+          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            Manage your target locations, assign leads by area, and track performance per location.
           </p>
+          <Link href="/locations" className="btn-crimson text-sm inline-flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5" /> Manage Locations
+          </Link>
         </div>
       )
     },

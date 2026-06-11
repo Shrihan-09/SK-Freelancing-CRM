@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { prisma } from '@/lib/prisma'
-import { Globe, TrendingUp, Phone, Users, Zap, ArrowRight, CheckCircle2, MessageSquare, Star, Bot } from 'lucide-react'
+import { Globe, TrendingUp, Phone, Users, Zap, ArrowRight, CheckCircle2, MessageSquare, Star, Bot, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import { getScoreColor } from '@/lib/scoring'
 export const revalidate = 0
@@ -9,7 +9,7 @@ export const revalidate = 0
 
 async function getDashboardData() {
   try {
-    const [businesses, statusCounts, industryCounts, taskCounts, recentActivity] = await Promise.all([
+    const [businesses, statusCounts, industryCounts, taskCounts, recentActivity, locationStats] = await Promise.all([
       prisma.business.findMany({ orderBy: { leadScore: 'desc' }, take: 100, select: {
         id: true, companyName: true, industry: true, hasWebsite: true, phone: true,
         priority: true, leadScore: true, reviewCount: true, status: true, yearsInBiz: true, familyOwned: true
@@ -19,6 +19,10 @@ async function getDashboardData() {
       prisma.task.groupBy({ by: ['status'], _count: { id: true } }).catch(() => []),
       prisma.activity.findMany({ orderBy: { createdAt: 'desc' }, take: 8,
         include: { business: { select: { companyName: true } } } }).catch(() => []),
+      prisma.location.findMany({
+        include: { _count: { select: { businesses: true } } },
+        orderBy: { name: 'asc' }
+      }).catch(() => []),
     ])
 
     const total = businesses.length
@@ -39,9 +43,9 @@ async function getDashboardData() {
     taskCounts.forEach((t: any) => { tasksByStatus[t.status] = t._count.id })
 
     const topLeads = businesses.slice(0, 6)
-    return { total, noWebsite, highPriority, hasPhone, closed, interested, topLeads, byStatus, byIndustry, tasksByStatus, recentActivity }
+    return { total, noWebsite, highPriority, hasPhone, closed, interested, topLeads, byStatus, byIndustry, tasksByStatus, recentActivity, locationStats }
   } catch {
-    return { total: 0, noWebsite: 0, highPriority: 0, hasPhone: 0, closed: 0, interested: 0, topLeads: [], byStatus: {}, byIndustry: {}, tasksByStatus: {}, recentActivity: [] }
+    return { total: 0, noWebsite: 0, highPriority: 0, hasPhone: 0, closed: 0, interested: 0, topLeads: [], byStatus: {}, byIndustry: {}, tasksByStatus: {}, recentActivity: [], locationStats: [] }
   }
 }
 
@@ -201,6 +205,33 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Location Performance */}
+      {data.locationStats.length > 0 && (
+        <div className="glass-card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-medium text-white">Location performance</h2>
+            <Link href="/locations" className="text-xs text-crimson-400 hover:text-crimson-300 flex items-center gap-1">
+              Manage <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+            {(data.locationStats as any[]).map((loc: any) => (
+              <Link key={loc.id} href={`/leads?locationId=${loc.id}`}
+                className="flex flex-col gap-1.5 p-3 rounded-xl transition-all hover:-translate-y-0.5"
+                style={{ background: 'rgba(225,29,72,0.06)', border: '1px solid rgba(225,29,72,0.15)' }}>
+                <div className="flex items-center gap-1.5">
+                  <MapPin className="w-3 h-3 flex-shrink-0" style={{ color: '#fb7185' }} />
+                  <span className="text-xs font-medium text-white truncate">{loc.name}</span>
+                </div>
+                <div className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{loc.city}, {loc.state}</div>
+                <div className="text-lg font-semibold" style={{ color: '#fb7185' }}>{loc._count.businesses}</div>
+                <div className="text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>leads</div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Top Opportunities */}
       <div className="glass-card overflow-hidden">

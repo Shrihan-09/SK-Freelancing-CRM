@@ -32,13 +32,22 @@ export async function POST(req: NextRequest) {
       const yearsInBiz = raw.years || raw['Years in Business'] || null
       const notes = raw.notes || raw.Notes || null
 
+      const locationName = (raw['location'] || raw['Location'] || '').toString().trim()
+      let locationId = null
+      if (locationName) {
+        const loc = await prisma.location.findFirst({
+          where: { OR: [{ name: { contains: locationName } }, { city: { contains: locationName } }] }
+        })
+        if (loc) locationId = loc.id
+      }
+
       const bizData = { companyName, phone, website, hasWebsite, reviewCount, industry, location,
         familyOwned, googleRating, yearsInBiz, notes }
       const score = calculateLeadScore({ ...bizData, companyName })
       const priority = getPriority(score)
 
       const biz = await prisma.business.create({
-        data: { ...bizData, leadScore: score, priority }
+        data: { ...bizData, leadScore: score, priority, locationId }
       })
       results.imported++
       results.businesses.push({ id: biz.id, companyName: biz.companyName, leadScore: biz.leadScore, priority: biz.priority })

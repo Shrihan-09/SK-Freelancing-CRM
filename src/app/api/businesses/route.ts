@@ -24,6 +24,8 @@ export async function GET(req: NextRequest) {
   }
   if (industry) where.industry = industry
   if (status) where.status = status
+  const locationId = searchParams.get('locationId') || ''
+  if (locationId) where.locationId = locationId
 
   const orderBy: any = sort === 'score' ? { leadScore: 'desc' }
     : sort === 'reviews' ? { reviewCount: 'desc' }
@@ -38,6 +40,7 @@ export async function GET(req: NextRequest) {
       phone: true, reviewCount: true, hasWebsite: true, familyOwned: true,
       googleRating: true, yearsInBiz: true, leadScore: true, priority: true,
       status: true, createdAt: true,
+      locationRef: { select: { id: true, name: true, city: true } },
     },
   })
 
@@ -51,7 +54,7 @@ export async function POST(req: NextRequest) {
   const priority = getPriority(score)
 
   const business = await prisma.business.create({
-    data: { ...body, leadScore: score, priority },
+    data: { ...body, leadScore: score, priority, locationId: body.locationId || null },
   })
   return NextResponse.json(business, { status: 201 })
 }

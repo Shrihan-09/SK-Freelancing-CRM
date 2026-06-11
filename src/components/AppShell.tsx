@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import {
   LayoutDashboard, Users, Phone, Settings,
-  TrendingUp, Upload, Zap, CheckSquare, MessageSquare, Bot, LogOut, Loader2
+  TrendingUp, Upload, Zap, CheckSquare, MessageSquare, Bot, LogOut, Loader2, MapPin
 } from 'lucide-react'
 
 const navItems = [
@@ -16,6 +16,7 @@ const navItems = [
   { href: '/ai',          icon: Bot,             label: 'AI',        mobile: true },
   { href: '/analytics',   icon: TrendingUp,      label: 'Analytics', mobile: false },
   { href: '/calls',       icon: Phone,           label: 'Calls',     mobile: false },
+  { href: '/locations',   icon: MapPin,          label: 'Locations', mobile: false },
   { href: '/bulk-import', icon: Upload,          label: 'Import',    mobile: false },
   { href: '/settings',    icon: Settings,        label: 'Settings',  mobile: true },
 ]

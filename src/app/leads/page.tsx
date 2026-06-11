@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { Search, Sparkles, Phone, Star, Info } from 'lucide-react'
 import { ALL_STATUSES, type LeadStatus } from '@/types'
 import StatusDropdown, { STATUS_CONFIG } from '@/components/ui/StatusDropdown'
@@ -25,25 +26,35 @@ const STATUS_BADGE: Record<string, string> = {
 }
 
 export default function LeadsPage() {
+  const searchParams = useSearchParams()
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [industry, setIndustry] = useState('')
   const [status, setStatus] = useState('')
   const [sort, setSort] = useState('score')
+  const [locationId, setLocationId] = useState('')
+  const [locations, setLocations] = useState<any[]>([])
   const [updating, setUpdating] = useState<string | null>(null)
+
+  useEffect(() => {
+    const locId = searchParams.get('locationId') || ''
+    if (locId) setLocationId(locId)
+    fetch('/api/locations').then(r => r.json()).then(d => setLocations(d.locations || []))
+  }, [])
 
   const fetchLeads = useCallback(async () => {
     const params = new URLSearchParams()
     if (search) params.set('search', search)
     if (industry) params.set('industry', industry)
     if (status) params.set('status', status)
+    if (locationId) params.set('locationId', locationId)
     params.set('sort', sort)
     const res = await fetch(`/api/businesses?${params}`)
     const data = await res.json()
     setLeads(data.businesses || [])
     setLoading(false)
-  }, [search, industry, status, sort])
+  }, [search, industry, status, locationId, sort])
 
   useEffect(() => { fetchLeads() }, [fetchLeads])
 
@@ -95,6 +106,11 @@ export default function LeadsPage() {
           className="input-dark text-xs py-1.5 w-auto">
           <option value="">All statuses</option>
           {ALL_STATUSES.map(s => <option key={s}>{s}</option>)}
+        </select>
+        <select value={locationId} onChange={e => setLocationId(e.target.value)}
+          className="input-dark text-xs py-1.5 w-auto">
+          <option value="">All locations</option>
+          {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
         </select>
         <select value={sort} onChange={e => setSort(e.target.value)}
           className="input-dark text-xs py-1.5 w-auto">
